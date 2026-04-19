@@ -44,7 +44,7 @@ export default function AdminPage() {
   const [password, setPassword] = useState("");
   const [refreshKey, setRefreshKey] = useState(0);
 
-  const [periodId, setPeriodId] = useState(ACADEMIC_PERIODS[0].id);
+  const [periodId, setPeriodId] = useState<string>(ACADEMIC_PERIODS[0].id);
   const [subject, setSubject] = useState("");
   const [noteTitle, setNoteTitle] = useState("");
   const [noteFile, setNoteFile] = useState<File | null>(null);
@@ -72,6 +72,9 @@ export default function AdminPage() {
 
   const noteFileInputRef = useRef<HTMLInputElement>(null);
   const examFileInputRef = useRef<HTMLInputElement>(null);
+
+  const [isDraggingNote, setIsDraggingNote] = useState(false);
+  const [isDraggingExam, setIsDraggingExam] = useState(false);
 
   const refresh = () => setRefreshKey((current) => current + 1);
 
@@ -343,13 +346,28 @@ export default function AdminPage() {
                 onChange={(event) => setNoteTitle(event.target.value)}
                 className="input-soft"
               />
-              <label className="input-soft flex cursor-pointer items-center justify-between gap-3">
-                <span className="truncate text-sm text-muted-foreground">
-                  {noteFile ? noteFile.name : "Choose PDF for notes"}
-                </span>
-                <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
-                  Select
-                </span>
+              <label 
+                className={`input-soft flex min-h-[100px] flex-col items-center justify-center gap-3 border-2 transition-all cursor-pointer bg-card/60
+                  ${isDraggingNote ? "border-primary bg-primary/10 border-dashed" : "border-border border-dashed hover:border-primary/50"}
+                `}
+                onDragOver={(e) => { e.preventDefault(); setIsDraggingNote(true); }}
+                onDragLeave={() => setIsDraggingNote(false)}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  setIsDraggingNote(false);
+                  if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                    setNoteFile(e.dataTransfer.files[0]);
+                  }
+                }}
+              >
+                <div className="flex w-full items-center justify-between gap-3 px-2">
+                  <span className="truncate text-sm font-medium text-foreground">
+                    {noteFile ? noteFile.name : "Drag & drop PDF here, or click to choose"}
+                  </span>
+                  <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary">
+                    {noteFile ? "Change" : "Browse"}
+                  </span>
+                </div>
                 <input
                   ref={noteFileInputRef}
                   type="file"
@@ -428,13 +446,28 @@ export default function AdminPage() {
                 rows={4}
                 className="input-soft resize-none"
               />
-              <label className="input-soft flex cursor-pointer items-center justify-between gap-3">
-                <span className="truncate text-sm text-muted-foreground">
-                  {examFile ? examFile.name : "Choose optional PDF or teacher handout"}
-                </span>
-                <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
-                  Select
-                </span>
+              <label 
+                className={`input-soft flex min-h-[100px] flex-col items-center justify-center gap-3 border-2 transition-all cursor-pointer bg-card/60
+                  ${isDraggingExam ? "border-primary bg-primary/10 border-dashed" : "border-border border-dashed hover:border-primary/50"}
+                `}
+                onDragOver={(e) => { e.preventDefault(); setIsDraggingExam(true); }}
+                onDragLeave={() => setIsDraggingExam(false)}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  setIsDraggingExam(false);
+                  if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                    setExamFile(e.dataTransfer.files[0]);
+                  }
+                }}
+              >
+                <div className="flex w-full items-center justify-between gap-3 px-2">
+                  <span className="truncate text-sm font-medium text-foreground">
+                    {examFile ? examFile.name : "Drag & drop PDF here, or click to choose"}
+                  </span>
+                  <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary">
+                    {examFile ? "Change" : "Browse"}
+                  </span>
+                </div>
                 <input
                   ref={examFileInputRef}
                   type="file"
