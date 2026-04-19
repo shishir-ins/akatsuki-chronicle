@@ -8,6 +8,7 @@ import AiChatPage from "@/pages/AiChatPage";
 import Footer from "@/components/Footer";
 import ProjectsPage from "@/pages/ProjectsPage";
 import ExamCentrePage from "@/pages/ExamCentrePage";
+import FloatingActionButtons from "@/components/FloatingActionButtons";
 
 export type AppPage =
   | "dashboard"
@@ -27,7 +28,7 @@ const Index = () => {
 
       <NavBar currentPage={page} onPageChange={(nextPage) => setPage(nextPage as AppPage)} />
 
-      <main className="animate-fade-in flex-1">
+      <main className="animate-fade-in flex-1 relative z-10">
         {page === "dashboard" && <DashboardPage onPageChange={(next) => setPage(next as AppPage)} />}
         {page === "exam" && <ExamCentrePage onPageChange={(next) => setPage(next as AppPage)} />}
         {page === "projects" && <ProjectsPage onPageChange={(next) => setPage(next as AppPage)} />}
@@ -36,6 +37,8 @@ const Index = () => {
         {page === "ai" && <AiChatPage />}
         {page === "admin" && <AdminPage />}
       </main>
+
+      <FloatingActionButtons onPageChange={(nextPage) => setPage(nextPage as AppPage)} currentPage={page} />
 
       {page !== "ai" && <Footer onPageChange={(nextPage) => setPage(nextPage as AppPage)} />}
     </div>
