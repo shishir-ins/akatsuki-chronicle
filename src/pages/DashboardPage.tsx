@@ -119,6 +119,19 @@ export default function DashboardPage({ onPageChange }: DashboardPageProps) {
           </div>
         </section>
 
+        {/* WEEKLY TIMETABLE - MOVED UP */}
+        <section className="overflow-hidden p-6 border-2 border-foreground/30 bg-background/50 shadow-lg">
+          <div className="mb-5 flex items-center justify-between gap-3 border-b-2 border-foreground/15 pb-4">
+            <div>
+              <h2 className="text-xl font-bold font-serif uppercase tracking-wider text-foreground">Weekly Timetable</h2>
+              <p className="text-xs font-semibold text-foreground/60 uppercase">
+                Keep this handy while planning tasks and revision.
+              </p>
+            </div>
+          </div>
+          <img src={timetableImg} alt="Class timetable" className="w-full border-4 border-foreground/10 object-contain shadow-md grayscale-[0.2] sepia-[0.3]" />
+        </section>
+
         <section
           className="hero-panel relative overflow-hidden rounded-[2rem] p-7 md:p-9 border-4 border-foreground/20 sepia-[0.4]"
           style={{
@@ -258,18 +271,6 @@ export default function DashboardPage({ onPageChange }: DashboardPageProps) {
           <div className="bg-background border border-foreground/20 p-2">
             <ExamCentrePanel compact onOpenFull={() => onPageChange("exam")} />
           </div>
-        </section>
-
-        <section className="overflow-hidden p-6 border-2 border-foreground/30 bg-background/50 shadow-lg">
-          <div className="mb-5 flex items-center justify-between gap-3 border-b-2 border-foreground/15 pb-4">
-            <div>
-              <h2 className="text-xl font-bold font-serif uppercase tracking-wider text-foreground">Weekly Timetable</h2>
-              <p className="text-xs font-semibold text-foreground/60 uppercase">
-                Keep this handy while planning tasks and revision.
-              </p>
-            </div>
-          </div>
-          <img src={timetableImg} alt="Class timetable" className="w-full border-4 border-foreground/10 object-contain shadow-md grayscale-[0.2] sepia-[0.3]" />
         </section>
 
         <section className="p-6 border-2 border-foreground/30 bg-background/50 shadow-lg">
