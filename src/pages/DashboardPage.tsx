@@ -273,10 +273,6 @@ export default function DashboardPage({ onPageChange }: DashboardPageProps) {
           </div>
         </section>
 
-        <section className="p-6 border-2 border-foreground/30 bg-background/50 shadow-lg">
-          <h2 className="text-2xl font-black font-serif uppercase tracking-tight text-foreground border-b-4 border-foreground/60 pb-2 mb-6">Class Notes Archive</h2>
-          <NotesLibrary />
-        </section>
       </div>
     </div>
   );

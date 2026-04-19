@@ -3,6 +3,7 @@ import {
   BookOpenCheck,
   Bot,
   FolderKanban,
+  GraduationCap,
   LayoutDashboard,
   Menu,
   MessageCircle,
@@ -25,6 +26,7 @@ const navItems = [
   { id: "exam", label: "Exam Centre", icon: BookOpenCheck },
   { id: "projects", label: "Projects", icon: FolderKanban },
   { id: "planner", label: "Planner", icon: SquarePen },
+  { id: "notes", label: "Notes", icon: GraduationCap },
   { id: "ai", label: "Jiraiya Sensei", icon: Bot },
   { id: "enquiry", label: "Enquiry", icon: MessageCircle },
   { id: "admin", label: "Admin", icon: Shield },
@@ -68,7 +70,7 @@ export default function NavBar({ currentPage, onPageChange }: NavBarProps) {
             <button
               onClick={() => void signOut()}
               className="rounded-[1rem] px-4 py-2 text-sm font-medium text-muted-foreground transition-all hover:bg-secondary hover:text-foreground"
-              title={user.email || "Signed in"}
+              title={user.user_metadata.display_name || "Signed in"}
             >
               Sign out
             </button>

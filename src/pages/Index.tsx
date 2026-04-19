@@ -8,6 +8,7 @@ import AiChatPage from "@/pages/AiChatPage";
 import Footer from "@/components/Footer";
 import ProjectsPage from "@/pages/ProjectsPage";
 import ExamCentrePage from "@/pages/ExamCentrePage";
+import NotesPage from "@/pages/NotesPage";
 import FloatingActionButtons from "@/components/FloatingActionButtons";
 
 export type AppPage =
@@ -15,6 +16,7 @@ export type AppPage =
   | "exam"
   | "projects"
   | "planner"
+  | "notes"
   | "ai"
   | "enquiry"
   | "admin";
@@ -33,6 +35,7 @@ const Index = () => {
         {page === "exam" && <ExamCentrePage onPageChange={(next) => setPage(next as AppPage)} />}
         {page === "projects" && <ProjectsPage onPageChange={(next) => setPage(next as AppPage)} />}
         {page === "planner" && <PlannerPage />}
+        {page === "notes" && <NotesPage />}
         {page === "enquiry" && <EnquiryPage />}
         {page === "ai" && <AiChatPage />}
         {page === "admin" && <AdminPage />}
