@@ -15,6 +15,7 @@ import {
   getAllSubjects,
   getPeriodLabel,
 } from "@/lib/academics";
+import AnnouncementBanner from "@/components/AnnouncementBanner";
 import frankyImg from "@/assets/franky.png";
 import { toast } from "sonner";
 import {
@@ -487,8 +488,11 @@ export default function AdminPage() {
             </div>
 
             <div className="mt-6 space-y-4">
+              <div className="overflow-hidden rounded-xl">
+                <AnnouncementBanner text={announcementInput || announcementStore.get()} />
+              </div>
               <input
-                placeholder="Announcement"
+                placeholder="Announcement text..."
                 value={announcementInput}
                 onChange={(event) => setAnnouncementInput(event.target.value)}
                 className="input-soft"

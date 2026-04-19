@@ -3,7 +3,7 @@ interface AnnouncementBannerProps {
 }
 
 export default function AnnouncementBanner({ text }: AnnouncementBannerProps) {
-  if (!text) return null;
+  const displayText = text || "NO ACTIVE ALERTS - STANDBY FOR UPDATES";
 
   return (
     <div className="relative overflow-hidden bg-black border-y-4 border-destructive/80 shadow-[0_0_30px_rgba(220,38,38,0.2)]">
@@ -18,11 +18,11 @@ export default function AnnouncementBanner({ text }: AnnouncementBannerProps) {
         <div className="overflow-hidden flex-1">
           <div className="animate-marquee-right whitespace-nowrap">
             <span className="inline-block text-base sm:text-lg font-bold text-white uppercase tracking-[0.1em] animate-flash-glow">
-              {text}
+              {displayText}
             </span>
             <span className="inline-block w-[50vw]" />
             <span className="inline-block text-base sm:text-lg font-bold text-white uppercase tracking-[0.1em] animate-flash-glow">
-              {text}
+              {displayText}
             </span>
           </div>
         </div>
