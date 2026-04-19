@@ -64,16 +64,9 @@ export default function AiChatPage() {
       setConversations([]);
       return;
     }
-
-    const { data } = await supabase
-      .from("chat_conversations")
-      .select("*")
-      .eq("user_id", user.id)
-      .order("updated_at", { ascending: false });
-
-    if (data) {
-      setConversations(data);
-    }
+    const convs = JSON.parse(localStorage.getItem(`bh_chat_conversations_${user.id}`) || "[]");
+    convs.sort((a: any, b: any) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime());
+    setConversations(convs);
   }, [user]);
 
   useEffect(() => {
@@ -89,15 +82,11 @@ export default function AiChatPage() {
   }, [activeConversationId]);
 
   const loadMessages = async (conversationId: string) => {
-    const { data } = await supabase
-      .from("chat_messages")
-      .select("*")
-      .eq("conversation_id", conversationId)
-      .order("created_at", { ascending: true });
-
-    if (data) {
+    const rawArgs = localStorage.getItem(`bh_chat_msgs_${conversationId}`);
+    if (rawArgs) {
+      const parsedMsgs = JSON.parse(rawArgs);
       setMessages(
-        data.map((message) => ({
+        parsedMsgs.map((message: any) => ({
           role: message.role as "user" | "assistant",
           content: message.image_url
             ? [
@@ -107,24 +96,29 @@ export default function AiChatPage() {
             : message.content,
         })),
       );
+    } else {
+      setMessages([]);
     }
   };
 
   const createConversation = async (firstMessage: string): Promise<string> => {
     const title = firstMessage.slice(0, 50) + (firstMessage.length > 50 ? "..." : "");
-    const { data } = await supabase
-      .from("chat_conversations")
-      .insert({ title, user_id: user?.id ?? null })
-      .select()
-      .single();
+    const newConv = {
+      id: crypto.randomUUID(),
+      title,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    };
+    
+    if (!user) throw new Error("No user");
 
-    if (!data) {
-      throw new Error("Failed to create conversation");
-    }
-
-    setConversations((current) => [data, ...current]);
-    setActiveConversationId(data.id);
-    return data.id;
+    const convs = JSON.parse(localStorage.getItem(`bh_chat_conversations_${user.id}`) || "[]");
+    convs.unshift(newConv);
+    localStorage.setItem(`bh_chat_conversations_${user.id}`, JSON.stringify(convs));
+    
+    setConversations(convs);
+    setActiveConversationId(newConv.id);
+    return newConv.id;
   };
 
   const saveMessage = async (
@@ -133,22 +127,39 @@ export default function AiChatPage() {
     content: string,
     imageUrl?: string | null,
   ) => {
-    await supabase.from("chat_messages").insert({
+    // Save Message
+    const msgs = JSON.parse(localStorage.getItem(`bh_chat_msgs_${conversationId}`) || "[]");
+    msgs.push({
+      id: crypto.randomUUID(),
       conversation_id: conversationId,
       role,
       content,
       image_url: imageUrl || null,
+      created_at: new Date().toISOString()
     });
+    localStorage.setItem(`bh_chat_msgs_${conversationId}`, JSON.stringify(msgs));
 
-    await supabase
-      .from("chat_conversations")
-      .update({ updated_at: new Date().toISOString() })
-      .eq("id", conversationId);
+    // Update Conversation Timestamp
+    if (user) {
+      const convs = JSON.parse(localStorage.getItem(`bh_chat_conversations_${user.id}`) || "[]");
+      const c = convs.find((c: any) => c.id === conversationId);
+      if (c) {
+        c.updated_at = new Date().toISOString();
+        localStorage.setItem(`bh_chat_conversations_${user.id}`, JSON.stringify(convs));
+      }
+    }
   };
 
   const deleteConversation = async (conversationId: string) => {
-    await supabase.from("chat_conversations").delete().eq("id", conversationId);
-    setConversations((current) => current.filter((conversation) => conversation.id !== conversationId));
+    localStorage.removeItem(`bh_chat_msgs_${conversationId}`);
+    
+    if (user) {
+      const convs = JSON.parse(localStorage.getItem(`bh_chat_conversations_${user.id}`) || "[]");
+      const filtered = convs.filter((c: any) => c.id !== conversationId);
+      localStorage.setItem(`bh_chat_conversations_${user.id}`, JSON.stringify(filtered));
+      setConversations(filtered);
+    }
+    
     if (activeConversationId === conversationId) {
       setActiveConversationId(null);
       setMessages([]);
