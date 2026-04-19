@@ -25,7 +25,7 @@ const navItems = [
   { id: "exam", label: "Exam Centre", icon: BookOpenCheck },
   { id: "projects", label: "Projects", icon: FolderKanban },
   { id: "planner", label: "Planner", icon: SquarePen },
-  { id: "ai", label: "AI Guide", icon: Bot },
+  { id: "ai", label: "Jiraiya Sensei", icon: Bot },
   { id: "enquiry", label: "Enquiry", icon: MessageCircle },
   { id: "admin", label: "Admin", icon: Shield },
 ];

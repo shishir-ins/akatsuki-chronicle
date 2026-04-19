@@ -404,7 +404,7 @@ export default function AiChatPage() {
               />
             </div>
             <div className="mt-5 rounded-full border border-primary/30 bg-primary/10 px-5 py-1.5 text-xs font-bold uppercase tracking-[0.2em] text-primary">
-              AI Guide System
+              Jiraiya Sensei System
             </div>
           </div>
 
