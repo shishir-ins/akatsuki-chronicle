@@ -85,7 +85,23 @@ function getStore<T>(key: string): T[] {
 }
 
 function setStore<T>(key: string, data: T[]): void {
-  localStorage.setItem(key, JSON.stringify(data));
+  try {
+    localStorage.setItem(key, JSON.stringify(data));
+  } catch (err: any) {
+    if (err.name === "QuotaExceededError" || err.name === "NS_ERROR_DOM_QUOTA_REACHED") {
+      // Strip large Base64 URLs if standard LocalStorage caps out (usually 5MB)
+      const compressedData = data.map((item: any) => {
+        const copy = { ...item };
+        if (copy.fileUrl && copy.fileUrl.length > 500) {
+          copy.fileUrl = ""; // Nullify giant base64 strings to save metadata
+        }
+        return copy;
+      });
+      localStorage.setItem(key, JSON.stringify(compressedData));
+    } else {
+      console.error(err);
+    }
+  }
 }
 
 function sortNewest<T extends { createdAt: string }>(items: T[]): T[] {

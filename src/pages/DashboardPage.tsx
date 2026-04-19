@@ -108,16 +108,14 @@ export default function DashboardPage({ onPageChange }: DashboardPageProps) {
           />
           
           <h1 
-            className="text-5xl sm:text-7xl md:text-[5.5rem] font-black tracking-tighter text-center mb-4" 
+            className="text-5xl sm:text-7xl md:text-[5.5rem] font-black tracking-tighter text-center mb-6" 
             style={{ fontFamily: '"Times New Roman", Times, serif', textShadow: '3px 3px 0px rgba(0,0,0,0.2)' }}
           >
             BLOODY HELL
           </h1>
           
-          <div className="w-full border-y-4 border-foreground py-4 mt-2">
-            <p className="text-center font-serif text-xl sm:text-2xl font-bold tracking-widest text-foreground">
-              Neti baalale repati AAdipurush-lu
-            </p>
+          <div className="w-full">
+            <AnnouncementBanner text={announcement} />
           </div>
         </section>
 

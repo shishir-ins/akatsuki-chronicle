@@ -22,10 +22,8 @@ export default function Footer({ onPageChange }: FooterProps) {
                 </p>
               </div>
             </div>
-            <p className="mt-5 max-w-md text-sm leading-6 text-muted-foreground">
-              Built to stay useful through the remaining semesters with a calm light theme,
-              semester-wise notes, an exam centre, and project planning spaces for both students
-              and admins.
+            <p className="mt-5 max-w-md text-xl font-serif font-bold italic leading-8 tracking-widest text-foreground">
+              Neti baalale repati AAdipurush-lu
             </p>
           </div>
 
