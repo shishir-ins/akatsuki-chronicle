@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/akatsuki-logo.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f7faf4" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Akatsuki Chronicle" />
+    <link rel="apple-touch-icon" href="/akatsuki-logo.png" />
+    <link rel="manifest" href="/manifest.json" />
+    <link id="canonical-link" rel="canonical" href="/" />
+
+    <title>Akatsuki Chronicle</title>
+    <meta
+      name="description"
+      content="Semester-wise notes, exam centre resources, and private project planning for EEE students."
+    />
+    <meta name="author" content="Akatsuki Chronicle" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Akatsuki Chronicle" />
+    <meta
+      property="og:description"
+      content="A calm EEE academic hub with notes from 2-2 to 4-2, exam resources, and project planning."
+    />
+    <meta id="og-url" property="og:url" content="/" />
+    <meta property="og:image" content="/akatsuki-logo.png" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Akatsuki Chronicle" />
+    <meta
+      name="twitter:description"
+      content="Semester-wise notes, exam centre resources, and private student project planning."
+    />
+    <meta name="twitter:image" content="/akatsuki-logo.png" />
+    <script>
+      (function () {
+        var siteUrl = window.location.origin;
+        var canonical = document.getElementById("canonical-link");
+        var ogUrl = document.getElementById("og-url");
+        if (canonical) canonical.setAttribute("href", siteUrl);
+        if (ogUrl) ogUrl.setAttribute("content", siteUrl);
+      })();
+    </script>
+  </head>
+
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
