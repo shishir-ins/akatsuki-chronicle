@@ -1,5 +1,5 @@
-export const APP_NAME = "Akatsuki Chronicle";
-export const APP_TAGLINE = "EEE academic hub";
+export const APP_NAME = "Bloody Hell";
+export const APP_TAGLINE = "Dhairye sahase manchu laxmi";
 export const STUDENT_ID_STORAGE_KEY = "akatsuki_active_student_id";
 
 export const ACADEMIC_PERIODS = [

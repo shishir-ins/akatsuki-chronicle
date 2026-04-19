@@ -95,13 +95,19 @@ export default function AuthPanel({ title, description }: AuthPanelProps) {
         </button>
       </div>
 
-      <div className="mt-5 space-y-4">
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          void submit();
+        }}
+        className="mt-5 space-y-4"
+      >
         {mode === "signup" && (
           <input
             value={displayName}
             onChange={(event) => setDisplayName(event.target.value)}
             placeholder="Display name"
-            className="input-soft"
+            className="input-soft block w-full"
           />
         )}
         <input
@@ -109,16 +115,36 @@ export default function AuthPanel({ title, description }: AuthPanelProps) {
           value={email}
           onChange={(event) => setEmail(event.target.value)}
           placeholder="Email address"
-          className="input-soft"
+          name="email"
+          autoComplete={mode === "signin" ? "email" : "new-email"}
+          className="input-soft block w-full"
         />
         <input
           type="password"
           value={password}
           onChange={(event) => setPassword(event.target.value)}
           placeholder="Password"
-          className="input-soft"
+          name="password"
+          autoComplete={mode === "signin" ? "current-password" : "new-password"}
+          className="input-soft block w-full"
         />
-        <button onClick={submit} disabled={loading} className="btn-primary flex w-full items-center justify-center gap-2">
+
+        {mode === "signin" && (
+          <label className="flex items-center gap-2 text-sm text-muted-foreground">
+            <input
+              type="checkbox"
+              defaultChecked
+              className="rounded border-border accent-primary"
+            />
+            Keep me signed in
+          </label>
+        )}
+
+        <button
+          type="submit"
+          disabled={loading}
+          className="btn-primary flex w-full items-center justify-center gap-2"
+        >
           {loading ? (
             <Loader2 className="h-4 w-4 animate-spin" />
           ) : mode === "signin" ? (
@@ -128,7 +154,7 @@ export default function AuthPanel({ title, description }: AuthPanelProps) {
           )}
           {mode === "signin" ? "Sign in" : "Create account"}
         </button>
-      </div>
+      </form>
     </div>
   );
 }

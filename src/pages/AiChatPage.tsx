@@ -383,8 +383,31 @@ export default function AiChatPage() {
 
   if (!user) {
     return (
-      <div className="min-h-screen pb-24">
-        <div className="container pt-20 animate-fade-in-up">
+      <div className="relative min-h-screen overflow-hidden pb-24">
+        <div
+          className="pointer-events-none absolute inset-0 z-0 opacity-[0.03] grayscale transition-opacity duration-1000"
+          style={{
+            backgroundImage: `url(${jiraiyaImg})`,
+            backgroundSize: "600px",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
+          }}
+        />
+
+        <div className="container relative z-10 pt-20 animate-fade-in-up">
+          <div className="mx-auto mb-6 flex flex-col items-center">
+            <div className="glow-accent flex h-24 w-24 items-center justify-center overflow-hidden rounded-3xl border-2 border-primary/20 bg-primary/10 p-2 shadow-2xl">
+              <img
+                src={jiraiyaImg}
+                alt="Jiraiya Sensei"
+                className="h-full w-full object-contain drop-shadow-md"
+              />
+            </div>
+            <div className="mt-5 rounded-full border border-primary/30 bg-primary/10 px-5 py-1.5 text-xs font-bold uppercase tracking-[0.2em] text-primary">
+              AI Guide System
+            </div>
+          </div>
+
           <AuthPanel
             title="Sign in for your AI study space"
             description="Your chat history is now private to your student account, so sign in to continue with Jiraiya Sensei."

@@ -12,6 +12,11 @@ import {
 } from "@/lib/privateData";
 import { type ProjectPlan } from "@/lib/store";
 import { cn } from "@/lib/utils";
+import { ArrowRight } from "lucide-react";
+
+interface ProjectsPageProps {
+  onPageChange?: (page: string) => void;
+}
 
 const STATUS_OPTIONS: Array<ProjectPlan["status"]> = [
   "idea",
@@ -27,7 +32,7 @@ const STATUS_LABELS: Record<ProjectPlan["status"], string> = {
   submitted: "Submitted",
 };
 
-export default function ProjectsPage() {
+export default function ProjectsPage({ onPageChange }: ProjectsPageProps) {
   const { user, loading } = useAuth();
   const [subject, setSubject] = useState("");
   const [title, setTitle] = useState("");
@@ -117,11 +122,19 @@ export default function ProjectsPage() {
               Private student planner
             </div>
             <h1 className="mt-4 text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
-              Plan projects privately before the admin submission sheet catches up.
+              Next Stop: AI Guide
             </h1>
             <p className="mt-4 max-w-xl text-sm leading-6 text-muted-foreground md:text-base">
-              Your projects are now tied to your signed-in student account, not only this browser.
+              Got big project goals? Break them down and ask Jiraiya Sensei for guidance inside the AI section securely.
             </p>
+            {onPageChange && (
+              <div className="mt-6 flex flex-wrap gap-3">
+                <button onClick={() => onPageChange("ai")} className="btn-primary inline-flex items-center gap-2 px-5">
+                  Talk to Jiraiya Sensei
+                  <ArrowRight className="h-4 w-4" />
+                </button>
+              </div>
+            )}
           </div>
         </section>
 

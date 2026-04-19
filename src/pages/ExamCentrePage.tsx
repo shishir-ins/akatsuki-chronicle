@@ -1,7 +1,12 @@
 import ExamCentrePanel from "@/components/ExamCentrePanel";
 import frankyImg from "@/assets/franky.png";
+import { ArrowRight } from "lucide-react";
 
-export default function ExamCentrePage() {
+interface ExamCentrePageProps {
+  onPageChange?: (page: string) => void;
+}
+
+export default function ExamCentrePage({ onPageChange }: ExamCentrePageProps) {
   return (
     <div className="min-h-screen pb-24">
       <div className="container pt-20 space-y-6 animate-fade-in-up">
@@ -13,15 +18,22 @@ export default function ExamCentrePage() {
         >
           <div className="relative z-10 max-w-2xl">
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-primary">
-              Exam Centre
+              Next Stop: Projects Planner
             </p>
             <h1 className="mt-3 text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
-              Everything needed for exam revision, one subject at a time.
+              Organize your academic goals visually.
             </h1>
             <p className="mt-4 max-w-xl text-sm leading-6 text-muted-foreground md:text-base">
-              Students can review important questions, open teacher-shared PDFs, and stay focused
-              on the right material before each exam.
+              Plan your individual projects securely and effectively. Tie tasks right into your private workspace to avoid distractions.
             </p>
+            {onPageChange && (
+              <div className="mt-6 flex flex-wrap gap-3">
+                <button onClick={() => onPageChange("projects")} className="btn-primary inline-flex items-center gap-2 px-5">
+                  Go to Projects
+                  <ArrowRight className="h-4 w-4" />
+                </button>
+              </div>
+            )}
           </div>
         </section>
 

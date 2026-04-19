@@ -11,7 +11,8 @@ import {
   X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { APP_NAME } from "@/lib/academics";
+import { APP_NAME, APP_TAGLINE } from "@/lib/academics";
+import logoImg from "@/assets/logo.png";
 import { useAuth } from "@/hooks/useAuth";
 
 interface NavBarProps {
@@ -35,41 +36,51 @@ export default function NavBar({ currentPage, onPageChange }: NavBarProps) {
 
   return (
     <>
-      <nav className="fixed left-1/2 top-4 z-50 hidden -translate-x-1/2 items-center gap-1.5 rounded-[1.5rem] border border-border bg-card/92 p-1.5 shadow-[0_18px_50px_rgba(84,93,86,0.14)] backdrop-blur-xl md:flex">
-        <div className="rounded-[1rem] px-4 py-2 text-sm font-semibold text-foreground">
-          {APP_NAME}
+      <nav className="fixed left-0 top-0 z-50 hidden w-full items-center justify-between border-b border-border bg-background/85 px-4 py-3 shadow-none backdrop-blur-xl md:flex md:px-8">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-primary/15 bg-primary/10 p-1">
+            <img src={logoImg} alt={APP_NAME} className="h-full w-full object-contain" />
+          </div>
+          <div>
+            <h1 className="text-base font-semibold tracking-tight text-foreground">{APP_NAME}</h1>
+            <p className="text-[10px] font-medium uppercase tracking-[0.22em] text-muted-foreground">
+              {APP_TAGLINE}
+            </p>
+          </div>
         </div>
-        {navItems.map((item) => (
-          <button
-            key={item.id}
-            onClick={() => onPageChange(item.id)}
-            className={cn(
-              "flex items-center gap-2 rounded-[1rem] px-4 py-2 text-sm font-medium transition-all duration-200",
-              currentPage === item.id
-                ? "bg-primary text-primary-foreground shadow-[0_12px_30px_rgba(114,138,120,0.22)]"
-                : "text-muted-foreground hover:bg-secondary hover:text-foreground",
-            )}
-          >
-            <item.icon className="h-4 w-4" />
-            {item.label}
-          </button>
-        ))}
-        {user ? (
-          <button
-            onClick={() => void signOut()}
-            className="rounded-[1rem] px-4 py-2 text-sm font-medium text-muted-foreground transition-all hover:bg-secondary hover:text-foreground"
-            title={user.email || "Signed in"}
-          >
-            Sign out
-          </button>
-        ) : (
-          <button
-            onClick={() => onPageChange("projects")}
-            className="rounded-[1rem] px-4 py-2 text-sm font-medium text-muted-foreground transition-all hover:bg-secondary hover:text-foreground"
-          >
-            Sign in
-          </button>
-        )}
+        <div className="flex items-center gap-1.5">
+          {navItems.map((item) => (
+            <button
+              key={item.id}
+              onClick={() => onPageChange(item.id)}
+              className={cn(
+                "flex items-center gap-2 rounded-[1rem] px-4 py-2 text-sm font-medium transition-all duration-200",
+                currentPage === item.id
+                  ? "bg-primary text-primary-foreground shadow-[0_12px_30px_rgba(114,138,120,0.22)]"
+                  : "text-muted-foreground hover:bg-secondary hover:text-foreground",
+              )}
+            >
+              <item.icon className="h-4 w-4" />
+              {item.label}
+            </button>
+          ))}
+          {user ? (
+            <button
+              onClick={() => void signOut()}
+              className="rounded-[1rem] px-4 py-2 text-sm font-medium text-muted-foreground transition-all hover:bg-secondary hover:text-foreground"
+              title={user.email || "Signed in"}
+            >
+              Sign out
+            </button>
+          ) : (
+            <button
+              onClick={() => onPageChange("projects")}
+              className="rounded-[1rem] px-4 py-2 text-sm font-medium text-muted-foreground transition-all hover:bg-secondary hover:text-foreground"
+            >
+              Sign in
+            </button>
+          )}
+        </div>
       </nav>
 
       <button

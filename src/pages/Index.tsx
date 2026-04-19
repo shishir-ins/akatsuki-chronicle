@@ -28,9 +28,9 @@ const Index = () => {
       <NavBar currentPage={page} onPageChange={(nextPage) => setPage(nextPage as AppPage)} />
 
       <main className="animate-fade-in flex-1">
-        {page === "dashboard" && <DashboardPage onPageChange={setPage} />}
-        {page === "exam" && <ExamCentrePage />}
-        {page === "projects" && <ProjectsPage />}
+        {page === "dashboard" && <DashboardPage onPageChange={(next) => setPage(next as AppPage)} />}
+        {page === "exam" && <ExamCentrePage onPageChange={(next) => setPage(next as AppPage)} />}
+        {page === "projects" && <ProjectsPage onPageChange={(next) => setPage(next as AppPage)} />}
         {page === "planner" && <PlannerPage />}
         {page === "enquiry" && <EnquiryPage />}
         {page === "ai" && <AiChatPage />}

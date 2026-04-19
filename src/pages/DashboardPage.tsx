@@ -81,21 +81,7 @@ export default function DashboardPage({ onPageChange }: DashboardPageProps) {
   }, [user]);
 
   return (
-    <div className="min-h-screen pb-24">
-      <header className="sticky top-0 z-30 border-b border-border bg-background/85 backdrop-blur-xl">
-        <div className="container flex items-center gap-4 py-4">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-primary/15 bg-primary/10 p-1.5">
-            <img src={logoImg} alt={APP_NAME} className="h-full w-full object-contain" />
-          </div>
-          <div>
-            <h1 className="text-xl font-semibold tracking-tight text-foreground">{APP_NAME}</h1>
-            <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-muted-foreground">
-              {APP_TAGLINE}
-            </p>
-          </div>
-        </div>
-      </header>
-
+    <div className="min-h-screen pb-24 pt-16">
       <div className="container mt-6 space-y-6 animate-fade-in-up">
         <section
           className="hero-panel relative overflow-hidden rounded-[2rem] p-7 md:p-9"
@@ -105,26 +91,18 @@ export default function DashboardPage({ onPageChange }: DashboardPageProps) {
         >
           <div className="relative z-10 max-w-2xl">
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-primary">
-              Calm, organised, semester-ready
+              Next Stop: Exam Centre
             </p>
             <h2 className="mt-3 text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
-              A lighter, peaceful academic space for notes, exams, and project planning.
+              Access your critical exam resources and previous mid papers.
             </h2>
             <p className="mt-4 max-w-xl text-sm leading-6 text-muted-foreground md:text-base">
-              Use the dashboard to jump into the exam centre, manage your private projects, and
-              browse notes from 2-2 all the way to your ending semester.
+              The Exam Centre contains important questions, PDFs, and revision notes to help you prepare. Jump in to get ready for your upcoming exams.
             </p>
 
             <div className="mt-6 flex flex-wrap gap-3">
               <button onClick={() => onPageChange("exam")} className="btn-primary inline-flex items-center gap-2 px-5">
-                Open exam centre
-                <ArrowRight className="h-4 w-4" />
-              </button>
-              <button
-                onClick={() => onPageChange("projects")}
-                className="inline-flex items-center gap-2 rounded-xl border border-border bg-card/80 px-5 py-3 text-sm font-medium text-foreground transition-colors hover:border-primary/30 hover:text-primary"
-              >
-                Go to projects
+                Take me to Exam Centre
                 <ArrowRight className="h-4 w-4" />
               </button>
             </div>
