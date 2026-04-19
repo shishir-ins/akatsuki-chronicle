@@ -1,98 +1,110 @@
-import { supabase } from "@/integrations/supabase/client";
 import type { PersonalTask, ProjectPlan } from "@/lib/store";
 
-export async function fetchPersonalTasks(userId: string): Promise<PersonalTask[]> {
-  const { data, error } = await supabase
-    .from("personal_tasks")
-    .select("*")
-    .eq("user_id", userId)
-    .order("created_at", { ascending: false });
+const TASKS_KEY = "bloody_hell_tasks_";
+const PROJECTS_KEY = "bloody_hell_projects_";
 
-  if (error) {
-    throw error;
+const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+function getStored<T>(key: string): T[] {
+  try {
+    return JSON.parse(localStorage.getItem(key) || "[]");
+  } catch {
+    return [];
   }
+}
 
-  return (data || []).map((task) => ({
-    id: task.id,
-    text: task.text,
-    userId: task.user_id,
-    completed: task.completed,
-    createdAt: task.created_at,
-  }));
+function setStored<T>(key: string, data: T[]) {
+  localStorage.setItem(key, JSON.stringify(data));
+}
+
+// --- PERSONAL TASKS ---
+
+export async function fetchPersonalTasks(userId: string): Promise<PersonalTask[]> {
+  await delay(200);
+  return getStored<PersonalTask>(TASKS_KEY + userId).sort((a, b) => 
+    new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+  );
 }
 
 export async function createPersonalTask(userId: string, text: string): Promise<void> {
-  const { error } = await supabase.from("personal_tasks").insert({
-    user_id: userId,
+  await delay(100);
+  const tasks = getStored<PersonalTask>(TASKS_KEY + userId);
+  tasks.push({
+    id: crypto.randomUUID(),
+    userId,
     text,
+    completed: false,
+    createdAt: new Date().toISOString(),
   });
-
-  if (error) {
-    throw error;
-  }
+  setStored(TASKS_KEY + userId, tasks);
 }
 
 export async function togglePersonalTask(taskId: string, completed: boolean): Promise<void> {
-  const { error } = await supabase
-    .from("personal_tasks")
-    .update({ completed })
-    .eq("id", taskId);
-
-  if (error) {
-    throw error;
+  // Since we don't pass userId here easily, we'd have to search all keys realistically, 
+  // but it's simpler if the app passes the current user so let's just find the key that has this task.
+  await delay(50);
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (key?.startsWith(TASKS_KEY)) {
+      const tasks = getStored<PersonalTask>(key);
+      const index = tasks.findIndex(t => t.id === taskId);
+      if (index !== -1) {
+        tasks[index].completed = completed;
+        setStored(key, tasks);
+        return;
+      }
+    }
   }
 }
 
 export async function deletePersonalTask(taskId: string): Promise<void> {
-  const { error } = await supabase.from("personal_tasks").delete().eq("id", taskId);
-  if (error) {
-    throw error;
+  await delay(50);
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (key?.startsWith(TASKS_KEY)) {
+      const tasks = getStored<PersonalTask>(key);
+      const newTasks = tasks.filter(t => t.id !== taskId);
+      if (newTasks.length !== tasks.length) {
+        setStored(key, newTasks);
+        return;
+      }
+    }
   }
 }
 
+// --- PROJECT PLANS ---
+
 export async function fetchProjectPlans(userId: string): Promise<ProjectPlan[]> {
-  const { data, error } = await supabase
-    .from("project_plans")
-    .select("*")
-    .eq("user_id", userId)
-    .order("created_at", { ascending: false });
-
-  if (error) {
-    throw error;
-  }
-
-  return (data || []).map((project) => ({
-    id: project.id,
-    userId: project.user_id,
-    subject: project.subject,
-    title: project.title,
-    details: project.details,
-    submissionDate: project.submission_date,
-    status: project.status as ProjectPlan["status"],
-    createdAt: project.created_at,
-  }));
+  await delay(200);
+  return getStored<ProjectPlan>(PROJECTS_KEY + userId).sort((a, b) => 
+    new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+  );
 }
 
 export async function createProjectPlan(
   project: Omit<ProjectPlan, "id" | "createdAt">,
 ): Promise<void> {
-  const { error } = await supabase.from("project_plans").insert({
-    user_id: project.userId,
-    subject: project.subject,
-    title: project.title,
-    details: project.details,
-    submission_date: project.submissionDate,
-    status: project.status,
+  await delay(100);
+  const plans = getStored<ProjectPlan>(PROJECTS_KEY + project.userId);
+  plans.push({
+    ...project,
+    id: crypto.randomUUID(),
+    createdAt: new Date().toISOString(),
   });
-
-  if (error) {
-    throw error;
-  }
+  setStored(PROJECTS_KEY + project.userId, plans);
 }
 
 export async function deleteProjectPlan(projectId: string): Promise<void> {
-  const { error } = await supabase.from("project_plans").delete().eq("id", projectId);
-  if (error) {
-    throw error;
+  await delay(50);
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (key?.startsWith(PROJECTS_KEY)) {
+      const plans = getStored<ProjectPlan>(key);
+      const newPlans = plans.filter(p => p.id !== projectId);
+      if (newPlans.length !== plans.length) {
+        setStored(key, newPlans);
+        return;
+      }
+    }
   }
 }

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Loader2, LockKeyhole, LogIn, UserPlus } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useAuth } from "@/hooks/useAuth";
 
 interface AuthPanelProps {
   title: string;
@@ -10,54 +10,55 @@ interface AuthPanelProps {
 
 export default function AuthPanel({ title, description }: AuthPanelProps) {
   const [mode, setMode] = useState<"signin" | "signup">("signin");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [displayName, setDisplayName] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const { signIn } = useAuth();
 
   const submit = async () => {
-    if (!email.trim() || !password.trim()) {
-      toast.error("Enter your email and password");
+    if (!displayName.trim() || !password.trim()) {
+      toast.error("Enter your display name and password");
       return;
     }
 
     setLoading(true);
 
     try {
+      // Simulate network wait for nicer UX
+      await new Promise(resolve => setTimeout(resolve, 800));
+
+      const usersRegistry = JSON.parse(localStorage.getItem("bloody_hell_users_registry") || "{}");
+      const nameKey = displayName.trim().toLowerCase();
+
       if (mode === "signup") {
-        const { data, error } = await supabase.auth.signUp({
-          email: email.trim(),
+        if (usersRegistry[nameKey]) {
+          throw new Error("Display name already taken. Please sign in or choose another name.");
+        }
+        
+        usersRegistry[nameKey] = {
           password,
-          options: {
-            data: {
-              display_name: displayName.trim() || null,
-            },
-          },
+          originalName: displayName.trim(),
+        };
+        localStorage.setItem("bloody_hell_users_registry", JSON.stringify(usersRegistry));
+        
+        signIn({
+          id: nameKey,
+          user_metadata: { display_name: displayName.trim() }
         });
-
-        if (error) {
-          throw error;
-        }
-
-        if (data.user) {
-          await supabase.from("student_profiles").upsert({
-            id: data.user.id,
-            display_name: displayName.trim() || null,
-          });
-        }
-
-        toast.success("Account created. You can now use your private workspace.");
+        
+        toast.success("Account created! You are now in your private workspace.");
       } else {
-        const { error } = await supabase.auth.signInWithPassword({
-          email: email.trim(),
-          password,
-        });
-
-        if (error) {
-          throw error;
+        const userRec = usersRegistry[nameKey];
+        if (!userRec || userRec.password !== password) {
+          throw new Error("Invalid display name or password");
         }
-
-        toast.success("Signed in successfully");
+        
+        signIn({
+          id: nameKey,
+          user_metadata: { display_name: userRec.originalName }
+        });
+        
+        toast.success(`Welcome back, ${userRec.originalName}!`);
       }
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Authentication failed");
@@ -102,23 +103,14 @@ export default function AuthPanel({ title, description }: AuthPanelProps) {
         }}
         className="mt-5 space-y-4"
       >
-        {mode === "signup" && (
-          <input
-            value={displayName}
-            onChange={(event) => setDisplayName(event.target.value)}
-            placeholder="Display name"
-            className="input-soft block w-full"
-          />
-        )}
         <input
-          type="email"
-          value={email}
-          onChange={(event) => setEmail(event.target.value)}
-          placeholder="Email address"
-          name="email"
-          autoComplete={mode === "signin" ? "email" : "new-email"}
+          type="text"
+          value={displayName}
+          onChange={(event) => setDisplayName(event.target.value)}
+          placeholder="Display Name"
           className="input-soft block w-full"
         />
+
         <input
           type="password"
           value={password}

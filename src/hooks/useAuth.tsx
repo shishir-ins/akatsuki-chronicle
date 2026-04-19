@@ -6,44 +6,44 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import type { Session, User } from "@supabase/supabase-js";
-import { supabase } from "@/integrations/supabase/client";
+
+export interface User {
+  id: string;
+  user_metadata: {
+    display_name: string;
+  };
+}
+
+export interface Session {
+  user: User;
+}
 
 interface AuthContextValue {
   session: Session | null;
   user: User | null;
   loading: boolean;
   signOut: () => Promise<void>;
+  signIn: (user: User) => void;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
+
+const AUTH_KEY = "bloody_hell_auth_session";
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    let mounted = true;
-
-    supabase.auth.getSession().then(({ data }) => {
-      if (!mounted) {
-        return;
+    try {
+      const stored = localStorage.getItem(AUTH_KEY);
+      if (stored) {
+        setSession(JSON.parse(stored));
       }
-      setSession(data.session);
-      setLoading(false);
-    });
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, nextSession) => {
-      setSession(nextSession);
-      setLoading(false);
-    });
-
-    return () => {
-      mounted = false;
-      subscription.unsubscribe();
-    };
+    } catch {
+      // ignore
+    }
+    setLoading(false);
   }, []);
 
   const value = useMemo<AuthContextValue>(
@@ -51,8 +51,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       session,
       user: session?.user ?? null,
       loading,
+      signIn: (user: User) => {
+        const newSession = { user };
+        localStorage.setItem(AUTH_KEY, JSON.stringify(newSession));
+        setSession(newSession);
+      },
       signOut: async () => {
-        await supabase.auth.signOut();
+        localStorage.removeItem(AUTH_KEY);
+        setSession(null);
       },
     }),
     [loading, session],
