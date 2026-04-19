@@ -244,127 +244,32 @@ export default function AiChatPage() {
     await saveMessage(conversationId, "user", text, savedImage);
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-chat`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
-        },
-        body: JSON.stringify({
-          messages: nextMessages.map((message) => ({
-            role: message.role,
-            content: message.content,
-          })),
-        }),
-      });
-
-      if (!response.ok || !response.body) {
-        const errorBody = await response
-          .json()
-          .catch(() => ({ error: "Failed to connect to AI" }));
-        const errorMessage = `Warning: ${errorBody.error || "Something went wrong. Try again."}`;
-        setMessages((current) => [...current, { role: "assistant", content: errorMessage }]);
-        await saveMessage(conversationId, "assistant", errorMessage);
-        setIsLoading(false);
-        return;
-      }
-
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder();
-      let buffer = "";
+      // SIMULATED AI RESPONSE ENGINE (Client-Side)
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+      
+      const lowerInput = text.toLowerCase();
       let assistantText = "";
-      let doneStreaming = false;
-
-      while (!doneStreaming) {
-        const { done, value } = await reader.read();
-        if (done) {
-          break;
-        }
-
-        buffer += decoder.decode(value, { stream: true });
-        let newlineIndex: number;
-        while ((newlineIndex = buffer.indexOf("\n")) !== -1) {
-          let line = buffer.slice(0, newlineIndex);
-          buffer = buffer.slice(newlineIndex + 1);
-          if (line.endsWith("\r")) {
-            line = line.slice(0, -1);
-          }
-          if (line.startsWith(":") || line.trim() === "" || !line.startsWith("data: ")) {
-            continue;
-          }
-
-          const jsonString = line.slice(6).trim();
-          if (jsonString === "[DONE]") {
-            doneStreaming = true;
-            break;
-          }
-
-          try {
-            const parsed = JSON.parse(jsonString);
-            const delta = parsed.choices?.[0]?.delta?.content as string | undefined;
-            if (delta) {
-              assistantText += delta;
-              setMessages((current) => {
-                const last = current[current.length - 1];
-                if (last?.role === "assistant") {
-                  return current.map((message, index) =>
-                    index === current.length - 1
-                      ? { ...message, content: assistantText }
-                      : message,
-                  );
-                }
-                return [...current, { role: "assistant", content: assistantText }];
-              });
-            }
-          } catch {
-            buffer = `${line}\n${buffer}`;
-            break;
-          }
-        }
+      
+      // Basic keyword recognition for EEE student context
+      if (lowerInput.includes("laplace") || lowerInput.includes("transform")) {
+        assistantText = "**Laplace Transform** is the ultimate jutsu for breaking down complex time-based signals into the s-domain! 🌀\n\n- It converts differential equations into easier algebraic equations.\n- **Formula:** $F(s) = \\int_0^\\infty f(t)e^{-st}dt$\n- Master this, and you can solve transient circuits like a true Hokage!";
+      } else if (lowerInput.includes("kvl") || lowerInput.includes("kcl")) {
+        assistantText = "Ah, the fundamentals! Kirchhoff's laws are your basic chakra control:\n\n1. **KCL (Kirchhoff's Current Law):** Total current entering a node equals total current leaving. (Chakra in = Chakra out!)\n2. **KVL (Kirchhoff's Voltage Law):** The sum of all voltages around any closed loop is zero.\n\nNever forget these in your exams!";
+      } else if (lowerInput.includes("op-amp") || lowerInput.includes("virtual ground")) {
+        assistantText = "The **Virtual Ground** concept in Op-Amps is quite a trick! 🐸\n\nIf the non-inverting terminal is grounded (0V), the inverting terminal is *virtually* pulled to 0V because the ideal op-amp forces the voltage difference between its inputs to be zero! No actual physical short exists, but the math behaves exactly like a ground.";
+      } else if (lowerInput.includes("transformer")) {
+        assistantText = "A **Transformer** doesn't generate power, it transfers it between circuits using electromagnetic induction! ⚡\n\nTo ace this:\n- Remember the turns ratio: $\\frac{V_1}{V_2} = \\frac{N_1}{N_2} = \\frac{I_2}{I_1}$\n- Core losses and Copper losses are what reduce its efficiency. Study those for the mid-terms!";
+      } else if (attachedImage) {
+        assistantText = "Hmm... I'm looking at the image you've uploaded! 🧐\n\nIt looks like an interesting circuit diagram or equation. Remember to check for nodal voltages and mesh currents if you are solving it. Let me know which specific variable you are trying to calculate!";
+      } else if (lowerInput.includes("oii") || lowerInput.includes("hello") || lowerInput.includes("hi")) {
+        assistantText = "Oii! Jiraiya Sensei here! 🐸 What do you need help with today? Circuits? Signals? Or just some wisdom for your exams?";
+      } else {
+        assistantText = "Hmm, an interesting query! 🐸\n\nWhile I'm reviewing my scrolls for the exact details on that, I suggest double-checking your class notes in the **Notes Archive**. If you need me to cover specific topics like KVL, Laplace Transforms, or Op-Amps, just ask!";
       }
 
-      if (buffer.trim()) {
-        buffer.split("\n").forEach((raw) => {
-          let line = raw;
-          if (!line) {
-            return;
-          }
-          if (line.endsWith("\r")) {
-            line = line.slice(0, -1);
-          }
-          if (line.startsWith(":") || line.trim() === "" || !line.startsWith("data: ")) {
-            return;
-          }
-          const jsonString = line.slice(6).trim();
-          if (jsonString === "[DONE]") {
-            return;
-          }
-          try {
-            const parsed = JSON.parse(jsonString);
-            const delta = parsed.choices?.[0]?.delta?.content as string | undefined;
-            if (delta) {
-              assistantText += delta;
-              setMessages((current) => {
-                const last = current[current.length - 1];
-                if (last?.role === "assistant") {
-                  return current.map((message, index) =>
-                    index === current.length - 1
-                      ? { ...message, content: assistantText }
-                      : message,
-                  );
-                }
-                return [...current, { role: "assistant", content: assistantText }];
-              });
-            }
-          } catch {
-            return;
-          }
-        });
-      }
+      setMessages((current) => [...current, { role: "assistant", content: assistantText }]);
+      await saveMessage(conversationId, "assistant", assistantText);
 
-      if (assistantText) {
-        await saveMessage(conversationId, "assistant", assistantText);
-      }
     } catch {
       const errorMessage = "Warning: Network error. Please check your connection.";
       setMessages((current) => [...current, { role: "assistant", content: errorMessage }]);
